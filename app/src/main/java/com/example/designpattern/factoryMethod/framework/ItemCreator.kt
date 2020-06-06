@@ -1,9 +1,8 @@
 package com.example.designpattern.factoryMethod.framework
 
 abstract class ItemCreator {
+    lateinit var item : Item
     fun create() : Item{
-        var item = Item()
-
         // step1
         requestItemsInfo()
         // step2

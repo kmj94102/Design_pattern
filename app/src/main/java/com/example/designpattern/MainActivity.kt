@@ -4,9 +4,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.designpattern.adapterPattern.AdapterImpl
+import com.example.designpattern.builder.Computer
+import com.example.designpattern.builder.ComputerBuilder
+import com.example.designpattern.builder.ComputerFactory
+import com.example.designpattern.builder.LgGramBluePrint
 import com.example.designpattern.factoryMethod.concrete.HpCreator
 import com.example.designpattern.factoryMethod.framework.Item
 import com.example.designpattern.factoryMethod.framework.ItemCreator
+import com.example.designpattern.singleton.SystemSpeaker
 import com.example.designpattern.strategy.*
 import com.example.designpattern.templateMethod.AbstGameConnectHelper
 import com.example.designpattern.templateMethod.DefaultGameConnectHelper
@@ -29,6 +34,32 @@ class MainActivity : AppCompatActivity() {
         printAdapter()
         // 팩토리 메소드 패턴
         printFactory()
+        // 싱글톤 패턴
+        printSingleTons()
+        // 빌더 패턴
+        printBuilder()
+        // 빌더 패턴2
+        printBuilder2()
+    }
+
+    private fun printBuilder2(){
+        val computer = ComputerBuilder
+            .start()
+            .setCpu("i7")
+            .setRam("8g")
+            .setStorage("256 ssd")
+            .build()
+
+        Log.e("BuilderPattern", computer.toString())
+    }
+
+    private fun printBuilder() {
+        val factory = ComputerFactory()
+        factory.setBluePrint(LgGramBluePrint())
+        factory.make()
+
+        val computer = factory.getComputer()
+        Log.e("BuilderPattern", computer.toString())
     }
 
     private fun printStrategy(){
@@ -68,5 +99,20 @@ class MainActivity : AppCompatActivity() {
         creator = HpCreator()
         item = creator.create()
         item.use()
+    }
+
+    private fun printSingleTons() {
+        Log.e("SingleTon ", "스피커1 생성")
+        val speaker1 = SystemSpeaker
+        Log.e("SingleTon ", "스피커2 생성")
+        val speaker2 = SystemSpeaker
+
+        Log.e("SingleTon", "스피커1의 볼륨 : ${speaker1.volume} / 스피커2의 볼륨 : ${speaker2.volume}")
+        speaker1.volume = 5
+        Log.e("SingleTon", "스피커1의 볼륨을 5로 설정")
+        Log.e("SingleTon", "스피커1의 볼륨 : ${speaker1.volume} / 스피커2의 볼륨 : ${speaker2.volume}")
+        speaker2.volume = 7
+        Log.e("SingleTon", "스피커1의 볼륨을 7로 설정")
+        Log.e("SingleTon", "스피커1의 볼륨 : ${speaker1.volume} / 스피커2의 볼륨 : ${speaker2.volume}")
     }
 }
