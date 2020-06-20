@@ -3,7 +3,6 @@ package com.example.designpattern
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
 import com.example.designpattern.abstractFactory.bikeFactory.SamFactory
 import com.example.designpattern.abstractFactory.concreate.LinuxGuiFac
 import com.example.designpattern.abstractFactory.concreate.MacGuiFac
@@ -16,14 +15,21 @@ import com.example.designpattern.builder.LgGramBluePrint
 import com.example.designpattern.composite.Component
 import com.example.designpattern.composite.File
 import com.example.designpattern.composite.Folder
+import com.example.designpattern.decorator.Base
+import com.example.designpattern.decorator.Espresso
+import com.example.designpattern.decorator.IBeverage
+import com.example.designpattern.decorator.Milk
 import com.example.designpattern.factoryMethod.concrete.HpCreator
 import com.example.designpattern.factoryMethod.framework.Item
 import com.example.designpattern.factoryMethod.framework.ItemCreator
+import com.example.designpattern.observer.MyButton
+import com.example.designpattern.observer.MyButton2
 import com.example.designpattern.singleton.SystemSpeaker
 import com.example.designpattern.strategy.*
 import com.example.designpattern.templateMethod.AbstGameConnectHelper
 import com.example.designpattern.templateMethod.DefaultGameConnectHelper
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,6 +62,10 @@ class MainActivity : AppCompatActivity() {
         printBridge()
         // 컴포짓 패턴
         printComposite()
+        // 데코레이터 패턴
+        printDecorator()
+        // 옵저버 패턴
+        printObserver()
 //        val builder = AlertDialog.Builder(this)
 //        val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
 //        builder.setView(dialogView).show()
@@ -204,5 +214,48 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun printDecorator(){
+        var beverage : IBeverage = Base()
+        /**
+         * 커피 제조 방법
+         *
+         * 에스프레소 : 커피의 기본
+         * 아메리카노 : 에스프레소 + 물
+         * 카페라뗴 : 에스프레소 + 스팀 밀크
+         *
+         * 헤이즐넛 : 아메리카노 + 헤이즐넛 시럽
+         * 카페모카 : 카페라떼 + 초콜릿
+         * 캬라멜 마끼아또 : 카페라떼 + 캬라멜 시럽럽
+        * */
+        var done = false
+        while (!done){
+            Log.e("Decorator", "음료 현재 가격 ${beverage.getTotalPrice()}")
+            Log.e("Decorator", "선택 : 1 - 샷 추가 / 2 - 우유 추가")
+            var sc = 1
+            when(sc){
+                1 -> beverage = Espresso(beverage)
+                2 -> beverage = Milk(beverage)
+            }
+            done= true
+        }
+        Log.e("Decorator", "음료 가격 : ${beverage.getTotalPrice()}")
+    }
 
+    private fun printObserver(){
+        val button = MyButton()
+        button.onClick()
+        button.setOnclickListener(object : MyButton.OnClickListener{
+            override fun onClick(myButton: MyButton) {
+                Log.e("Observe Pattern ", "1번 $myButton is clicked")
+            }
+        })
+
+        val button2 = MyButton2()
+        button2.addObserver { o, arg ->
+            Log.e("Observe Pattern ", "2번 $o is Clicked")
+        }
+
+        button2.onClick()
+        button2.onClick()
+    }
 }
