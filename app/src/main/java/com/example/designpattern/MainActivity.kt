@@ -12,6 +12,7 @@ import com.example.designpattern.bridge.PrintMorseCode
 import com.example.designpattern.builder.ComputerBuilder
 import com.example.designpattern.builder.ComputerFactory
 import com.example.designpattern.builder.LgGramBluePrint
+import com.example.designpattern.chainOfResponsibility.*
 import com.example.designpattern.composite.Component
 import com.example.designpattern.composite.File
 import com.example.designpattern.composite.Folder
@@ -28,8 +29,13 @@ import com.example.designpattern.singleton.SystemSpeaker
 import com.example.designpattern.strategy.*
 import com.example.designpattern.templateMethod.AbstGameConnectHelper
 import com.example.designpattern.templateMethod.DefaultGameConnectHelper
+import com.example.designpattern.visitor.Visitable
+import com.example.designpattern.visitor.VisitableA
+import com.example.designpattern.visitor.Visitor
+import com.example.designpattern.visitor.VisitorA
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,6 +72,12 @@ class MainActivity : AppCompatActivity() {
         printDecorator()
         // 옵저버 패턴
         printObserver()
+        // 방문자 패턴
+        printVisitor()
+        // 책임 사슬 패턴
+        printChinOfResponsibility()
+        // 책임 사슬 패턴2
+        printChinOfResponsibility2()
 //        val builder = AlertDialog.Builder(this)
 //        val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
 //        builder.setView(dialogView).show()
@@ -257,5 +269,60 @@ class MainActivity : AppCompatActivity() {
 
         button2.onClick()
         button2.onClick()
+    }
+
+    private fun printVisitor(){
+        val visitor : Visitor = VisitorA()
+
+        val visitableArray = ArrayList<Visitable>()
+        visitableArray.add(VisitableA(1))
+        visitableArray.add(VisitableA(2))
+        visitableArray.add(VisitableA(3))
+        visitableArray.add(VisitableA(4))
+        visitableArray.add(VisitableA(5))
+
+        for(visitable in visitableArray){
+            visitable.accept(visitor)
+        }
+
+        if(visitor is VisitorA)
+            Log.e("Visitor Pattern ", "${visitor.getAgeSum()}")
+    }
+
+    private fun printChinOfResponsibility(){
+        val plus = PlusCalculator()
+        val sub = SubCalculator()
+
+        plus.setNextCalculator(sub)
+
+        val request1 = Request(1, 2, "+")
+        val request2 = Request(10, 2, "-")
+
+        plus.process(request1)
+        plus.process(request2)
+    }
+
+    private fun printChinOfResponsibility2(){
+        val attack = Attack(100)
+        val armor1 = Armor( 10)
+        val armor2 = Armor(15)
+
+        armor1.setNextDefense(armor2)
+        // 첫번째 공격
+        armor1.defense(attack)
+
+        Log.e("ChainOfResponsibility2", "${attack.amount}")
+
+        val defense = object : Defense{
+            override fun defense(attack: Attack) {
+                attack.amount = attack.amount - 50
+            }
+        }
+        // 추가 착용
+        armor2.setNextDefense(defense)
+        attack.amount = 100
+        // 두번째 공격
+        armor1.defense(attack)
+        Log.e("ChainOfResponsibility2", "${attack.amount}")
     }
 }
